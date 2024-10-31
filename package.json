@@ -12,7 +12,8 @@
   "author": "Prince Raval",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "mongoose": "^6.6.1"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
