@@ -11,11 +11,6 @@ MongoDB: MongoDB, a NoSQL database, is used for data storage. Its flexible schem
 
 Postman: Postman was utilized for API testing. Each route was tested to verify its response structure, accuracy, and error-handling capabilities. Postman collections helped ensure that each API endpoint worked as expected before being deployed, reducing the likelihood of bugs in production.
 
-Additional Techniques:
-
-Error Handling: Standardized error responses and logging for improved debugging and user feedback.
-Data Validation: Middleware for validating incoming request data to maintain data integrity and prevent unauthorized data manipulation.
-
 ## Running the Project
 
 `npm run start` — to launch the server
