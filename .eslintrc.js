@@ -20,12 +20,6 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
-    // Allow identifiers starting with an underscore, specifically for _id
-    "id-match": [
-      "error",
-      "^_?id$|^[a-z]+([A-Z][a-z]+)*$",
-      { onlyDeclarations: true },
-    ],
     // Allow underscore dangle only for _id
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
   },
