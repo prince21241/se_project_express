@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const {
   BAD_REQUEST_STATUS_CODE,
@@ -17,8 +19,8 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
+  const { name, avatar, email, password } = req.body;
+  User.create({ name, avatar, email, password })
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.error(err);
