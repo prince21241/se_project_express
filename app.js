@@ -13,12 +13,14 @@ mongoose
   .catch(console.error);
 
 app.use(express.json());
+
+/* Temporary Middleware
 app.use((req, res, next) => {
   req.user = {
     _id: "6712607bf104d7baf29317f3",
   };
   next();
-});
+}); */
 
 //app.post("/signin", login);
 app.post("/signup", createUser);
