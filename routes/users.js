@@ -1,13 +1,9 @@
-const router = require("express").Router();
-const { getUsers, getUser, createUser } = require("../controllers/user");
+const express = require("express");
+const router = express.Router();
+const { updateProfile, getCurrentUser } = require("../controllers/user");
+const authorize = require("../middlewares/auth");
 
-// Route to handle GET request for all users
-router.get("/", getUsers);
-
-// Route to handle GET request for a specific user by ID
-router.get("/:userId", getUser);
-
-// Route to handle POST request to create a new user
-router.post("/", createUser);
+router.get("/me", authorize, getCurrentUser);
+router.patch("/me", authorize, updateProfile);
 
 module.exports = router;
