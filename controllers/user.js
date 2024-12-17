@@ -7,6 +7,7 @@ const {
   SERVER_ERROR_STATUS_CODE,
 } = require("../utils/errors");
 
+//Creating User
 const createUser = (req, res) => {
   const { email, password, name, avatar } = req.body;
   if (!email || !password || !name || !avatar) {
@@ -50,6 +51,7 @@ const createUser = (req, res) => {
     });
 };
 
+// Getting user data
 const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
@@ -73,4 +75,32 @@ const getUser = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, getUser };
+// Updating User data
+const updateUser = (req, res) => {
+  const { name, avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .orFail()
+    .then(() => res.send({ name, avatar }))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(NOT_FOUND_STATUS_CODE)
+          .send({ message: "Requested resource not found" });
+      }
+      if (err.name === "ValidationError") {
+        return res
+          .status(BAD_REQUEST_STATUS_CODE)
+          .send({ message: "Validation failed" });
+      }
+      return res
+        .status(SERVER_ERROR_STATUS_CODE)
+        .send({ message: "An error has occurred on the server" });
+    });
+};
+
+module.exports = { getUsers, createUser, getUser, updateUser };
