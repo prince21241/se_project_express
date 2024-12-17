@@ -60,7 +60,7 @@ const createUser = (req, res) => {
     });
 };
 
-const createUser = (req, res) => {
+/*const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   User.create({ name, avatar, email, password })
     .then((user) => res.status(201).send(user))
@@ -75,7 +75,7 @@ const createUser = (req, res) => {
         .status(SERVER_ERROR_STATUS_CODE)
         .send({ message: "An error has occurred on the server" });
     });
-};
+}; */
 
 const getUser = (req, res) => {
   const { userId } = req.params;
