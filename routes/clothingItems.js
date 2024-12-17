@@ -6,10 +6,10 @@ const {
   likeItem,
   dislikeItem,
 } = require("../controllers/clothingItems");
-const authMiddleware = require("../middlewares/auth"); // Import authorization middleware
+const authMiddleware = require("../middlewares/auth");
 
 // Public Route
-router.get("/", getItems); // No authorization needed
+router.get("/", getItems);
 
 // Protected Routes
 router.post("/", authMiddleware, createItem);
