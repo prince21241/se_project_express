@@ -3,6 +3,7 @@ const {
   BAD_REQUEST_STATUS_CODE,
   NOT_FOUND_STATUS_CODE,
   SERVER_ERROR_STATUS_CODE,
+  FORBIDDEN, // Added this error code
 } = require("../utils/errors");
 
 const getItems = (req, res) => {
@@ -41,14 +42,13 @@ const deleteItem = (req, res) => {
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
         return res
-          .status(403) // Forbidden
+          .status(FORBIDDEN)
           .send({ message: "You are not authorized to delete this item" });
       }
-
-      // Delete item
-      return ClothingItem.deleteOne({ _id: itemId });
+      return ClothingItem.deleteOne({ _id: itemId }).then(() =>
+        res.send({ message: "Item successfully deleted" })
+      );
     })
-    .then(() => res.send({ message: "Item successfully deleted" }))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError" || err.name === "CastError") {
