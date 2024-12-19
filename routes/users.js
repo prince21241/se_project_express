@@ -1,10 +1,10 @@
 const express = require("express");
-const { updateProfile, getCurrentUser } = require("../controllers/user");
+const { updateUser, getUser } = require("../controllers/user");
 const authorize = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.get("/me", authorize, getCurrentUser);
-router.patch("/me", authorize, updateProfile);
+router.get("/me", authorize, getUser);
+router.patch("/me", authorize, updateUser);
 
 module.exports = router;
