@@ -15,7 +15,7 @@ const login = (req, res) => {
 
   if (!email || !password) {
     return res
-      .status(BAD_REQUEST_STATUS_CODE)
+      .status(BAD_REQUEST_STATUS_CODE.status)
       .send({ message: "Email and password are required" });
   }
 
@@ -24,18 +24,20 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.send({ token });
+      res.send({ token });
     })
     .catch((err) => {
-      console.error(err);
-      if (err.message === "Incorrect email or password") {
+      if (
+        err.message.includes("Incorrect email") ||
+        err.message.includes("Incorrect password")
+      ) {
         return res
-          .status(UNAUTHORIZED_STATUS)
-          .send({ message: "Incorrect email or password" });
+          .status(AUTHORIZATION_ERROR.status)
+          .send({ message: AUTHORIZATION_ERROR.message });
       }
       return res
-        .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: "An error occurred with the server" });
+        .status(DEFAULT_ERROR.status)
+        .send({ message: DEFAULT_ERROR.message });
     });
 };
 
