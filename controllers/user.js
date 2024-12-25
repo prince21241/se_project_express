@@ -14,7 +14,7 @@ const login = (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res(BAD_REQUEST_STATUS_CODE.status).send({
+    return res(BAD_REQUEST_STATUS_CODE).send({
       message: "Email and password are required",
     });
   }
@@ -31,13 +31,13 @@ const login = (req, res) => {
         err.message.includes("Incorrect email") ||
         err.message.includes("Incorrect password")
       ) {
-        return res
-          .status(UNAUTHORIZED_STATUS.status)
-          .send({ message: "incorrect email or password " });
+        return res(UNAUTHORIZED_STATUS.status).send({
+          message: "incorrect email or password ",
+        });
       }
-      return res
-        .status(SERVER_ERROR_STATUS_CODE.status)
-        .send({ message: "An error has occured on the server" });
+      return res(SERVER_ERROR_STATUS_CODE.status).send({
+        message: "An error has occured on the server",
+      });
     });
 };
 
