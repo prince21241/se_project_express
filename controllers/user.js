@@ -31,11 +31,11 @@ const login = (req, res) => {
         err.message.includes("Incorrect email") ||
         err.message.includes("Incorrect password")
       ) {
-        return res(UNAUTHORIZED_STATUS.status).send({
+        return res(UNAUTHORIZED_STATUS).send({
           message: "incorrect email or password ",
         });
       }
-      return res(SERVER_ERROR_STATUS_CODE.status).send({
+      return res(SERVER_ERROR_STATUS_CODE).send({
         message: "An error has occured on the server",
       });
     });
