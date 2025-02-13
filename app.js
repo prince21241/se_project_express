@@ -4,6 +4,7 @@ const mainRouter = require("./routes/index");
 const { login } = require("./controllers/user");
 const { createUser } = require("./controllers/user");
 const errorHandler = require("./middlewares/error-handler");
+const { errors } = require("celebrate");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -17,6 +18,7 @@ mongoose
 
 app.use(express.json());
 app.use(errorHandler);
+app.use(errors());
 
 /* Temporary Middleware
 app.use((req, res, next) => {
