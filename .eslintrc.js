@@ -20,7 +20,7 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
-    // Allow underscore dangle only for _id
+    "no-unused-vars": ["error", { argsIgnorePattern: "next" }],
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
   },
 };

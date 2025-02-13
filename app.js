@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
 const { login } = require("./controllers/user");
 const { createUser } = require("./controllers/user");
+const errorHandler = require("./middlewares/error-handler");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -15,6 +16,7 @@ mongoose
   .catch(console.error);
 
 app.use(express.json());
+app.use(errorHandler);
 
 /* Temporary Middleware
 app.use((req, res, next) => {
