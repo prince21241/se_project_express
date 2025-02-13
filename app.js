@@ -5,6 +5,7 @@ const { login } = require("./controllers/user");
 const { createUser } = require("./controllers/user");
 const errorHandler = require("./middlewares/error-handler");
 const { errors } = require("celebrate");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -16,6 +17,8 @@ mongoose
   })
   .catch(console.error);
 
+app.use(errorLogger);
+app.use(requestLogger);
 app.use(express.json());
 app.use(errorHandler);
 app.use(errors());
