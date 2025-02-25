@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { celebrate, Joi, Segments, errors } = require("celebrate");
 const mainRouter = require("./routes/index");
 const { login } = require("./controllers/user");
 const { createUser } = require("./controllers/user");
@@ -18,31 +19,41 @@ mongoose
   .catch(console.error);
 
 app.use(errorLogger);
-app.use(requestLogger);
 app.use(express.json());
-app.use(errorHandler);
-app.use(errors());
 
-/* Temporary Middleware
-app.use((req, res, next) => {
-  req.user = {
-    _id: "6712607bf104d7baf29317f3",
-  };
-  next();
-}); */
+//Validation
+const authSchema = {
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).required(),
+  }),
+};
 
-//Crash Testing
+const userSchema = {
+  [Segments.BODY]: Joi.object({
+    name: Joi.string().min(2).max(30).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).required(),
+  }),
+};
 
+//Crash testing
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
   }, 0);
 });
 
-app.post("/signin", login);
-app.post("/signup", createUser);
+//Routes with validation
+app.post("/signin", celebrate(authSchema), login);
+app.post("/signup", celebrate(userSchema), createUser);
 
 app.use("/", mainRouter);
+
+//Error handler placed after the routes as per comments in the code review
+app.use(requestLogger);
+app.use(errorHandler);
+app.use(errors());
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
