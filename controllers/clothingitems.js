@@ -1,122 +1,93 @@
 const ClothingItem = require("../models/clothingItem");
 const {
-  BAD_REQUEST_STATUS_CODE,
-  NOT_FOUND_STATUS_CODE,
-  SERVER_ERROR_STATUS_CODE,
-  FORBIDDEN, // Added this error code
+  BadRequestError,
+  NotFoundError,
+  ServerError,
+  ForbiddenError,
 } = require("../utils/errors");
 
-const getItems = (req, res) => {
-  ClothingItem.find({})
-    .then((items) => res.send(items))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: "An error has occurred on the server" });
-    });
+const getItems = async (req, res, next) => {
+  try {
+    const items = await ClothingItem.find({});
+    res.send(items);
+  } catch (err) {
+    next(new ServerError("An error has occurred on the server"));
+  }
 };
 
-const createItem = (req, res) => {
-  const { name, weather, imageUrl } = req.body;
-  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
-    .then((item) => res.status(201).send(item))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST_STATUS_CODE)
-          .send({ message: "Invalid data" });
-      }
-      return res
-        .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: "An error has occurred on the server" });
+const createItem = async (req, res, next) => {
+  try {
+    const { name, weather, imageUrl } = req.body;
+    const item = await ClothingItem.create({
+      name,
+      weather,
+      imageUrl,
+      owner: req.user._id,
     });
+    res.status(201).send(item);
+  } catch (err) {
+    if (err.name === "ValidationError" || err.name === "CastError") {
+      return next(new BadRequestError("Invalid data"));
+    }
+    next(new ServerError("An error has occurred on the server"));
+  }
 };
 
-const deleteItem = (req, res) => {
-  const { itemId } = req.params;
+const deleteItem = async (req, res, next) => {
+  try {
+    const { itemId } = req.params;
+    const item = await ClothingItem.findById(itemId).orFail(
+      () => new NotFoundError("Requested resource not found")
+    );
 
-  ClothingItem.findById(itemId)
-    .orFail()
-    .then((item) => {
-      if (item.owner.toString() !== req.user._id) {
-        return res
-          .status(FORBIDDEN)
-          .send({ message: "You are not authorized to delete this item" });
-      }
-      return ClothingItem.deleteOne({ _id: itemId }).then(() =>
-        res.send({ message: "Item successfully deleted" })
+    if (item.owner.toString() !== req.user._id) {
+      return next(
+        new ForbiddenError("You are not authorized to delete this item")
       );
-    })
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST_STATUS_CODE)
-          .send({ message: "Invalid data" });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND_STATUS_CODE)
-          .send({ message: "Requested resource not found" });
-      }
-      return res
-        .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: "An error has occurred on the server" });
-    });
+    }
+
+    await ClothingItem.deleteOne({ _id: itemId });
+    res.send({ message: "Item successfully deleted" });
+  } catch (err) {
+    if (err.name === "ValidationError" || err.name === "CastError") {
+      return next(new BadRequestError("Invalid data"));
+    }
+    next(err);
+  }
 };
 
-const likeItem = (req, res) => {
-  ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true }
-  )
-    .orFail()
-    .then((item) => res.send(item))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST_STATUS_CODE)
-          .send({ message: "Invalid data" });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND_STATUS_CODE)
-          .send({ message: "Requested resource not found" });
-      }
-      return res
-        .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: "An error has occurred on the server" });
-    });
+const likeItem = async (req, res, next) => {
+  try {
+    const item = await ClothingItem.findByIdAndUpdate(
+      req.params.itemId,
+      { $addToSet: { likes: req.user._id } },
+      { new: true }
+    ).orFail(() => new NotFoundError("Requested resource not found"));
+
+    res.send(item);
+  } catch (err) {
+    if (err.name === "ValidationError" || err.name === "CastError") {
+      return next(new BadRequestError("Invalid data"));
+    }
+    next(err);
+  }
 };
 
-const dislikeItem = (req, res) => {
-  ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
-    { $pull: { likes: req.user._id } },
-    { new: true }
-  )
-    .orFail()
-    .then((item) => res.send(item))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST_STATUS_CODE)
-          .send({ message: "Invalid data" });
-      }
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND_STATUS_CODE)
-          .send({ message: "Requested resource not found" });
-      }
-      return res
-        .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: "An error has occurred on the server" });
-    });
+const dislikeItem = async (req, res, next) => {
+  try {
+    const item = await ClothingItem.findByIdAndUpdate(
+      req.params.itemId,
+      { $pull: { likes: req.user._id } },
+      { new: true }
+    ).orFail(() => new NotFoundError("Requested resource not found"));
+
+    res.send(item);
+  } catch (err) {
+    if (err.name === "ValidationError" || err.name === "CastError") {
+      return next(new BadRequestError("Invalid data"));
+    }
+    next(err);
+  }
 };
 
 module.exports = {
