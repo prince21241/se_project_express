@@ -2,9 +2,10 @@ const express = require("express");
 const { celebrate, Joi, Segments } = require("celebrate");
 const { updateUser, getUser } = require("../controllers/user");
 const authorize = require("../middlewares/auth");
+
 const router = express.Router();
 
-//Validation
+// Validation
 const updateUserSchema = {
   [Segments.BODY]: Joi.object({
     name: Joi.string().min(2).max(30).required(),
@@ -12,7 +13,7 @@ const updateUserSchema = {
   }),
 };
 
-//Routes
+// Routes
 router.get("/me", authorize, getUser);
 router.patch("/me", authorize, celebrate(updateUserSchema), updateUser);
 

@@ -4,7 +4,6 @@ const User = require("../models/user");
 const {
   BadRequestError,
   NotFoundError,
-  ServerError,
   ConflictError,
   UnauthorizedError,
 } = require("../utils/errors");
@@ -19,7 +18,7 @@ const login = async (req, res, next) => {
 
     const user = await User.findUserByCredentials(email, password);
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" });
-    res.send({ token });
+    return res.send({ token });
   } catch (err) {
     if (
       err.message.includes("Incorrect email") ||
@@ -27,7 +26,7 @@ const login = async (req, res, next) => {
     ) {
       return next(new UnauthorizedError("Incorrect email or password"));
     }
-    next(err);
+    return next(err);
   }
 };
 
@@ -45,14 +44,14 @@ const createUser = async (req, res, next) => {
 
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({ email, password: hash, name, avatar });
-    res
+    return res
       .status(201)
       .send({ email: user.email, name: user.name, avatar: user.avatar });
   } catch (err) {
     if (err.name === "ValidationError") {
       return next(new BadRequestError("Invalid data"));
     }
-    next(err);
+    return next(err);
   }
 };
 
@@ -61,7 +60,7 @@ const getUser = async (req, res, next) => {
     const user = await User.findById(req.user._id).orFail(
       () => new NotFoundError("Requested resource not found")
     );
-    res.send({
+    return res.send({
       _id: user._id,
       email: user.email,
       name: user.name,
@@ -71,7 +70,7 @@ const getUser = async (req, res, next) => {
     if (err.name === "CastError") {
       return next(new BadRequestError("Invalid data"));
     }
-    next(err);
+    return next(err);
   }
 };
 
@@ -83,12 +82,12 @@ const updateUser = async (req, res, next) => {
       { name, avatar },
       { new: true, runValidators: true }
     ).orFail(() => new NotFoundError("Requested resource not found"));
-    res.send({ name: user.name, avatar: user.avatar });
+    return res.send({ name: user.name, avatar: user.avatar });
   } catch (err) {
     if (err.name === "ValidationError") {
       return next(new BadRequestError("Validation failed"));
     }
-    next(err);
+    return next(err);
   }
 };
 

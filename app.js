@@ -5,7 +5,6 @@ const mainRouter = require("./routes/index");
 const { login } = require("./controllers/user");
 const { createUser } = require("./controllers/user");
 const errorHandler = require("./middlewares/error-handler");
-const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
@@ -21,7 +20,7 @@ mongoose
 app.use(errorLogger);
 app.use(express.json());
 
-//Validation
+// Validation
 const authSchema = {
   [Segments.BODY]: Joi.object({
     email: Joi.string().email().required(),
@@ -37,20 +36,20 @@ const userSchema = {
   }),
 };
 
-//Crash testing
+// Crash testing
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
   }, 0);
 });
 
-//Routes with validation
+// Routes with validation
 app.post("/signin", celebrate(authSchema), login);
 app.post("/signup", celebrate(userSchema), createUser);
 
 app.use("/", mainRouter);
 
-//Error handler placed after the routes as per comments in the code review
+// Error handler placed after the routes as per comments in the code review
 app.use(requestLogger);
 app.use(errorHandler);
 app.use(errors());

@@ -9,9 +9,9 @@ const {
 const getItems = async (req, res, next) => {
   try {
     const items = await ClothingItem.find({});
-    res.send(items);
+    return res.send(items);
   } catch (err) {
-    next(new ServerError("An error has occurred on the server"));
+    return next(new ServerError("An error has occurred on the server"));
   }
 };
 
@@ -24,21 +24,19 @@ const createItem = async (req, res, next) => {
       imageUrl,
       owner: req.user._id,
     });
-    res.status(201).send(item);
+    return res.status(201).send(item);
   } catch (err) {
     if (err.name === "ValidationError" || err.name === "CastError") {
       return next(new BadRequestError("Invalid data"));
     }
-    next(new ServerError("An error has occurred on the server"));
+    return next(new ServerError("An error has occurred on the server"));
   }
 };
 
 const deleteItem = async (req, res, next) => {
   try {
     const { itemId } = req.params;
-    const item = await ClothingItem.findById(itemId).orFail(
-      () => new NotFoundError("Requested resource not found")
-    );
+    const item = await ClothingItem.findById(itemId).orFail();
 
     if (item.owner.toString() !== req.user._id) {
       return next(
@@ -47,12 +45,15 @@ const deleteItem = async (req, res, next) => {
     }
 
     await ClothingItem.deleteOne({ _id: itemId });
-    res.send({ message: "Item successfully deleted" });
+    return res.send({ message: "Item successfully deleted" });
   } catch (err) {
     if (err.name === "ValidationError" || err.name === "CastError") {
       return next(new BadRequestError("Invalid data"));
     }
-    next(err);
+    if (err.name === "DocumentNotFoundError") {
+      return next(new NotFoundError("Requested resource not found"));
+    }
+    return next(new ServerError("An error has occurred on the server"));
   }
 };
 
@@ -62,14 +63,16 @@ const likeItem = async (req, res, next) => {
       req.params.itemId,
       { $addToSet: { likes: req.user._id } },
       { new: true }
-    ).orFail(() => new NotFoundError("Requested resource not found"));
-
-    res.send(item);
+    ).orFail();
+    return res.send(item);
   } catch (err) {
     if (err.name === "ValidationError" || err.name === "CastError") {
       return next(new BadRequestError("Invalid data"));
     }
-    next(err);
+    if (err.name === "DocumentNotFoundError") {
+      return next(new NotFoundError("Requested resource not found"));
+    }
+    return next(new ServerError("An error has occurred on the server"));
   }
 };
 
@@ -79,14 +82,16 @@ const dislikeItem = async (req, res, next) => {
       req.params.itemId,
       { $pull: { likes: req.user._id } },
       { new: true }
-    ).orFail(() => new NotFoundError("Requested resource not found"));
-
-    res.send(item);
+    ).orFail();
+    return res.send(item);
   } catch (err) {
     if (err.name === "ValidationError" || err.name === "CastError") {
       return next(new BadRequestError("Invalid data"));
     }
-    next(err);
+    if (err.name === "DocumentNotFoundError") {
+      return next(new NotFoundError("Requested resource not found"));
+    }
+    return next(new ServerError("An error has occurred on the server"));
   }
 };
 
