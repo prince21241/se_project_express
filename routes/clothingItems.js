@@ -18,8 +18,7 @@ const itemIdSchema = {
 
 const createItemSchema = {
   [Segments.BODY]: Joi.object({
-    name: Joi.string().required(),
-    description: Joi.string().required(),
+    name: Joi.string().min(2).max(100).required(),
     imageUrl: Joi.string().uri().required(),
     weather: Joi.string().valid("hot", "warm", "cold").required(),
   }),
@@ -32,6 +31,11 @@ router.get("/", getItems);
 router.post("/", authMiddleware, celebrate(createItemSchema), createItem);
 router.delete("/:itemId", authMiddleware, celebrate(itemIdSchema), deleteItem);
 router.put("/:itemId/likes", authMiddleware, celebrate(itemIdSchema), likeItem);
-router.delete("/:itemId/likes", authMiddleware, celebrate(itemIdSchema), dislikeItem);
+router.delete(
+  "/:itemId/likes",
+  authMiddleware,
+  celebrate(itemIdSchema),
+  dislikeItem
+);
 
 module.exports = router;
