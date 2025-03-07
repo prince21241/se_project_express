@@ -6,7 +6,7 @@ const {
   NotFoundError,
   ConflictError,
   UnauthorizedError,
-} = require("../utils/errors");
+} = require("../utils/errors/");
 const { JWT_SECRET } = require("../utils/config");
 
 const login = async (req, res, next) => {

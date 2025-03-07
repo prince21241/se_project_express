@@ -4,7 +4,7 @@ const {
   NotFoundError,
   ServerError,
   ForbiddenError,
-} = require("../utils/errors");
+} = require("../utils/errors/");
 
 const getItems = async (req, res, next) => {
   try {

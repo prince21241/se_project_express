@@ -23,4 +23,4 @@ Before committing your code, make sure you edit the file `sprint.txt` in the roo
 
 ## DOMAIN NAME
 
-princeraval.tripleten.com
+http://www.wtwr-project.serverpit.com/
