@@ -3,7 +3,7 @@ const UnauthorizedError = require("./UnauthorizedError");
 const BadRequestError = require("./BadRequestError");
 const ConflictError = require("./ConflictError");
 const ForbiddenError = require("./ForbiddenError");
-const InternalServerError = require("./InternalServerError"); // Fixed typo
+const InternalServerError = require("./InternalServerError");
 
 module.exports = {
   BadRequestError,

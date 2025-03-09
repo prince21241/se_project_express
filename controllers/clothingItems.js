@@ -1,4 +1,5 @@
-const ClothingItem = require("../models/clothingItem");
+const ClothingItem = require("../models/clothingItems");
+
 const {
   BadRequestError,
   NotFoundError,
