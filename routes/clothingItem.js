@@ -6,7 +6,7 @@ const {
   deleteItem,
   likeItem,
   dislikeItem,
-} = require("../controllers/clothingItems");
+} = require("../controllers/clothingItem");
 const authMiddleware = require("../middlewares/auth");
 
 // Validation schemas

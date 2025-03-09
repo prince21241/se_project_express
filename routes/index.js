@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const userRouter = require("./users");
-const itemRouter = require("./clothingItems");
+const itemRouter = require("./clothingItem");
 const NotFoundError = require("../utils/errors/NotFoundError");
 
 // Add an empty line here to satisfy ESLint's `newline-after-import` rule
