@@ -24,3 +24,4 @@ Before committing your code, make sure you edit the file `sprint.txt` in the roo
 ## DOMAIN NAME
 
 http://www.wtwr-project.serverpit.com/
+https://wtwr-project.serverpit.com/
