@@ -18,7 +18,15 @@ const login = async (req, res, next) => {
 
     const user = await User.findUserByCredentials(email, password);
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" });
-    return res.send({ token });
+    return res.send({
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        _id: user._id,
+      },
+    });
   } catch (err) {
     if (
       err.message.includes("Incorrect email") ||
