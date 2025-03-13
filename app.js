@@ -4,6 +4,7 @@ const { celebrate, Joi, Segments, errors } = require("celebrate");
 const mainRouter = require("./routes/index");
 const { login } = require("./controllers/user");
 const { createUser } = require("./controllers/user");
+const cors = require("cors");
 
 const errorHandler = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
@@ -19,6 +20,7 @@ mongoose
   })
   .catch(console.error);
 
+app.use(cors());
 // Middleware setup
 app.use(express.json());
 
